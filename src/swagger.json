@@ -1,0 +1,224 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Api de produtos",
+        "description": "exemplo de api de produtos com o swagger.",
+        "termsOfService": "http://localhost:3000/v1/terms",
+        "version": "1.0.0",
+        "contact": {
+            "email": "usuario@email.com"            
+        }
+    },
+    
+    "servers": [
+        {
+            "url": "http://localhost:3000/v1",
+            "description": "server on localhost 4 tests."
+        }
+        
+    ],
+
+    "paths": {
+        "/product": {
+            "post": {
+                "summary": "Cadastro de produto",
+                "description": "Essa rota será responsável para cadastrar um novo produto",
+                "tags": ["Product"],
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Dados do produto para salvar",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "price": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                      }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Product"
+                            },
+                            "examples": {
+                                "product": {
+                                    "value": {
+                                        "name": "Mouse Usb.",
+                                        "description": "Mouse sandisk.",
+                                        "price": 10.99
+                                    }
+                                }
+                            }
+                        }              
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "product already exists, try update!"
+                    },
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema" : {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    }
+                }
+            }, 
+            "get": {
+                "summary": "Obtém todos os produtos",
+                "description": "Essa rota devolve uma lista com todos os produtos",
+                "tags": ["Product"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }                      
+        },
+        "/product/{id}": {
+            "put": {
+                "summary": "Atualiza um produto usando id como referência",
+                "description": "Essa rota permite atualizar um produto",
+                "tags": ["Product"],
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id do produto",
+                        "required": true,
+                        "schema": {
+                            "type":"string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Dados para atualização de um produto.",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "price": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Product"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "204": {
+                        "description": "No Content."
+                    },
+                    "200": {
+                        "description": "Success."
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Remove um produto do sistema",
+                "description": "Essa rota permite remover um produto",
+                "tags": ["Product"],
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "bad request, param id is required and must be valid!"
+                    },
+                    "404": {
+                        "description": "the product with specified id was not found."
+                    },
+                    "204" : {
+                        "description": "OK"
+                    }
+                }
+            }  
+        }
+    },
+
+    "components": {
+        "schemas":{            
+            "Product": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "number"
+                    },
+                    "id": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }   
+    }
+
+}
